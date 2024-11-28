@@ -1,6 +1,6 @@
 import { StyleSheet, ActivityIndicator, FlatList } from "react-native";
 import { useEffect, useState } from "react";
-import { PokemonCard } from "../PokemonCard";
+import { PokemonCard } from "../componets/PokemonCard";
 import { fetchData } from "../utils/api";
 
 interface Pokemon {

@@ -1,5 +1,8 @@
-import { Text, View, StyleSheet, Image } from "react-native";
+import { Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
+import { fetchData } from "../utils/api";
+import { useNavigation } from "@react-navigation/native";
+import { MainStackScreenProps } from "../navigators/types";
 
 
 interface PokemonCardProps {
@@ -25,18 +28,20 @@ interface Pokemon{
 }
 
 export function PokemonCard({ url }: PokemonCardProps) {
-    const [pokemon, setPokemon] = useState<Pokemon>()
+    const [pokemon, setPokemon] = useState<Pokemon | null>(null); 
+
+    const navigation = useNavigation<MainStackScreenProps<'Home'>['navigation']>();
 
     useEffect(() => {
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                setPokemon(data)
-            })
-    }, [url])
+        fetchData(url).then((data) => {
+            if (data) {
+                setPokemon(data); 
+            }
+        });
+    }, [url]);
     if (!pokemon) return null
     return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Detail', { name: pokemon.name })}>
             <Image 
                 source={{
                     uri: pokemon.sprites.other['official-artwork'].front_default
@@ -44,7 +49,7 @@ export function PokemonCard({ url }: PokemonCardProps) {
                 style={styles.image}
             />
             <Text style={styles.name}>{pokemon.name}</Text>
-        </View>
+        </TouchableOpacity>
     )
 }
 
