@@ -1,5 +1,7 @@
-import { Stack } from "expo-router";
+//Esto es el primer container
 
-export default function RootLayout() {
-  return <Stack />;
-}
+// import { Stack } from "expo-router";
+
+// export default function RootLayout() {
+//   return <Stack />;
+// }

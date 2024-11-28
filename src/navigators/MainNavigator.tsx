@@ -7,7 +7,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import type { MainStackParamList } from "./types";
 
 
-const Stack = createNativeStackNavigator<MainStackParamList>()
+const Stack = createNativeStackNavigator<MainStackParamList>();
 
 
 export function MainNavigator() {

@@ -4,12 +4,11 @@ import { fetchData } from "../utils/api";
 import { useNavigation } from "@react-navigation/native";
 import { MainStackScreenProps } from "../navigators/types";
 
-
 interface PokemonCardProps {
     url: string;
 }
 
-interface Pokemon{
+interface Pokemon {
     name: string;
     order: number;
     sprites: {
@@ -18,39 +17,43 @@ interface Pokemon{
                 front_default: string;
             }
         }
-    }
+    };
     types: {
         slots: number;
         type: {
             name: string;
-        }
-    }
+        };
+    };
 }
 
 export function PokemonCard({ url }: PokemonCardProps) {
-    const [pokemon, setPokemon] = useState<Pokemon | null>(null); 
+    const [pokemon, setPokemon] = useState<Pokemon | null>(null);
 
     const navigation = useNavigation<MainStackScreenProps<'Home'>['navigation']>();
 
     useEffect(() => {
         fetchData(url).then((data) => {
             if (data) {
-                setPokemon(data); 
+                setPokemon(data);
             }
         });
     }, [url]);
-    if (!pokemon) return null
+
+    if (!pokemon) return null;
+
     return (
-        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Detail', { name: pokemon.name })}>
-            <Image 
+        <TouchableOpacity
+            style={styles.container}
+            onPress={() => navigation.navigate('Detail', { name: pokemon.name })}>
+            <Image
                 source={{
-                    uri: pokemon.sprites.other['official-artwork'].front_default
+                    uri: pokemon.sprites.other['official-artwork'].front_default,
                 }}
                 style={styles.image}
             />
             <Text style={styles.name}>{pokemon.name}</Text>
         </TouchableOpacity>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -59,15 +62,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-
     image: {
         width: 100,
         height: 100,
-        marginRight: 32
+        marginRight: 32,
     },
-
-    name:{
+    name: {
         fontWeight: 'bold',
         fontSize: 32,
-    }
+    },
 });

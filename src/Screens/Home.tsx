@@ -23,11 +23,11 @@ export function Home() {
         });
     }, []);
 
-    // Función para cargar más Pokémon
+    
     const loadMore = async () => {
-        if (!next || isLoadingMore) return; // Si no hay más datos o ya está cargando, salimos
+        if (!next || isLoadingMore) return; 
 
-        setIsLoadingMore(true); // Indicamos que estamos cargando más
+        setIsLoadingMore(true); 
         const data = await fetchData(next);
         if (data){
             setPokemon((prev) => [...prev, ...data.results]);
@@ -38,11 +38,11 @@ export function Home() {
 
     return (
         <FlatList
-            data={pokemon} // Usamos `FlatList` para mostrar los Pokémon
+            data={pokemon} 
             keyExtractor={(item) => item.name}
             renderItem={({ item }) => <PokemonCard url={item.url} />}
-            onEndReached={loadMore} // Llamamos a `loadMore` cuando lleguemos al final de la lista
-            ListFooterComponent={() => isLoadingMore ? <ActivityIndicator size="large" /> : null} // Mostramos el indicador de carga si estamos cargando más
+            onEndReached={loadMore} 
+            ListFooterComponent={() => isLoadingMore ? <ActivityIndicator size="large" /> : null} 
         />
     );
 }

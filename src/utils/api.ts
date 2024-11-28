@@ -23,13 +23,13 @@ export interface Pokemon{
 export async function fetchData(url: string = 'https://pokeapi.co/api/v2/pokemon/') {
     try {
         const response = await axios.get(url);
-        return response.data; // Devolvemos los datos de la respuesta
+        return response.data; 
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error('Error:', error.message);
         } else {
             console.error('Unknown error');
         }
-        return null; // Aseguramos que se devuelvan `null` en caso de error
+        return null; 
     }
 }
