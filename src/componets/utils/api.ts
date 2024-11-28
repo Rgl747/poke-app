@@ -1,4 +1,5 @@
-import { Axios } from "axios";
+import axios from "axios";
+
 
 export interface Pokemon{
     name: string;
@@ -19,17 +20,16 @@ export interface Pokemon{
 }
 
 
-
-//esto???
-// async function fetchData() {
-//     try {
-//         const response = await axios.get('https://pokeapi.co/api/v2/pokemon/');
-//         console.log('Data obtained:', response.data);
-//     } catch (error: unknown) { 
-//         if (error instanceof Error) { 
-//             console.error('Error:', error.message);
-//         } else {
-//             console.error('Unknown error');
-//         }
-//     }
-// }
+export async function fetchData(url: string = 'https://pokeapi.co/api/v2/pokemon/') {
+    try {
+        const response = await axios.get(url);
+        return response.data; // Devolvemos los datos de la respuesta
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error('Error:', error.message);
+        } else {
+            console.error('Unknown error');
+        }
+        return null; // Aseguramos que se devuelvan `null` en caso de error
+    }
+}

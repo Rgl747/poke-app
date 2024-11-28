@@ -1,6 +1,7 @@
 import { Home } from "@/src/componets/Screens/Home";
 import axios from "axios";
 
+
 async function fetchData() {
     try {
         const response = await axios.get('https://pokeapi.co/api/v2/pokemon/');
