@@ -1,16 +1,16 @@
 import axios from "axios";
 
 
-export interface Pokemon{
+export interface Pokemon {
     name: string;
     id: number;
     sprites: {
         other: {
-            'official-artwork': {
+            "official-artwork": {
                 front_default: string;
-            }
-        }
-    }
+            };
+        };
+    };
     types: {
         slots: number;
         type: {
@@ -18,9 +18,13 @@ export interface Pokemon{
         };
     }[];
     species: {
-        url: string;
-
-    }
+        url: string; 
+    };
+    abilities: {
+        ability: {
+            name: string;
+        };
+    }[];
 }
 
 export interface Species{
