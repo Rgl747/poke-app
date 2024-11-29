@@ -47,9 +47,9 @@ export function PokemonCard({ url }: PokemonCardProps) {
             flex={1}
             margin={1.5}
             padding={4}
-            backgroundColor={getTypeColor(pokemon.types[0].type.name) + '.500'}
+            backgroundColor={getTypeColor(pokemon.types[0].type.name) + '.400'}
             borderRadius={40}
-            onPress={() => navigation.navigate('Detail', { name: pokemon.name })}
+            onPress={() => navigation.navigate('Detail', { name: pokemon.name, url })}
         >
             <Center>
                 <AspectRatio ratio={1} width="80%">
