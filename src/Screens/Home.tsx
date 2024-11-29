@@ -1,7 +1,8 @@
-import { StyleSheet, ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator  } from "react-native";
 import { useEffect, useState } from "react";
 import { PokemonCard } from "../componets/PokemonCard";
 import { fetchData } from "../utils/api";
+import { FlatList } from "native-base";
 
 interface Pokemon {
     name: string;
@@ -42,11 +43,11 @@ export function Home() {
             keyExtractor={(item) => item.name}
             renderItem={({ item }) => <PokemonCard url={item.url} />}
             onEndReached={loadMore} 
+            numColumns={2}
+            contentInsetAdjustmentBehavior='automatic'
             ListFooterComponent={() => isLoadingMore ? <ActivityIndicator size="large" /> : null} 
+            contentContainerStyle={{padding: 2, backgroundColor: 'white'}}
         />
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff' },
-});

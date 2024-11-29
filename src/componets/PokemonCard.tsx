@@ -1,8 +1,9 @@
-import { Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import { fetchData } from "../utils/api";
 import { useNavigation } from "@react-navigation/native";
 import { MainStackScreenProps } from "../navigators/types";
+import { Box, Heading, Image, Text, HStack, Pressable, Center, AspectRatio, Skeleton } from "native-base";
+import { getTypeColor, formatNumber } from "../utils/Helper";
 
 interface PokemonCardProps {
     url: string;
@@ -10,20 +11,20 @@ interface PokemonCardProps {
 
 interface Pokemon {
     name: string;
-    order: number;
+    id: number;
     sprites: {
         other: {
             'official-artwork': {
                 front_default: string;
-            }
-        }
+            };
+        };
     };
     types: {
-        slots: number;
+        slot: number; 
         type: {
             name: string;
         };
-    };
+    }[];
 }
 
 export function PokemonCard({ url }: PokemonCardProps) {
@@ -42,33 +43,44 @@ export function PokemonCard({ url }: PokemonCardProps) {
     if (!pokemon) return null;
 
     return (
-        <TouchableOpacity
-            style={styles.container}
-            onPress={() => navigation.navigate('Detail', { name: pokemon.name })}>
-            <Image
-                source={{
-                    uri: pokemon.sprites.other['official-artwork'].front_default,
-                }}
-                style={styles.image}
-            />
-            <Text style={styles.name}>{pokemon.name}</Text>
-        </TouchableOpacity>
+        <Pressable
+            flex={1}
+            margin={1.5}
+            padding={4}
+            backgroundColor={getTypeColor(pokemon.types[0].type.name) + '.500'}
+            borderRadius={40}
+            onPress={() => navigation.navigate('Detail', { name: pokemon.name })}
+        >
+            <Center>
+                <AspectRatio ratio={1} width="80%">
+                    <Image
+                        source={{
+                            uri: pokemon.sprites.other['official-artwork'].front_default,
+                        }}
+                        alt="image"
+                    />
+                </AspectRatio>
+            </Center>
+
+            <HStack justifyContent={"space-between"} marginBottom={2}>
+                <Heading textTransform={"capitalize"} color={"white"} size={'sm'}>{pokemon.name}</Heading>
+                <Text color={"white"}>#{formatNumber(pokemon.id)}</Text>
+            </HStack>
+
+            <HStack space={2} flexWrap="wrap">
+                {pokemon.types.map((type, index) => (
+                    <Box 
+                    key={index} 
+                    padding={2} 
+                    marginRight={1} 
+                    alignItems="center" 
+                    backgroundColor={getTypeColor(type.type.name) + '.600'}
+                    borderRadius={10}
+                    >
+                        <Text textTransform={"capitalize"} color={'white'} fontSize={'xs'}> {type.type.name} </Text>
+                    </Box>
+                ))}
+            </HStack>
+        </Pressable>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 8,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    image: {
-        width: 100,
-        height: 100,
-        marginRight: 32,
-    },
-    name: {
-        fontWeight: 'bold',
-        fontSize: 32,
-    },
-});

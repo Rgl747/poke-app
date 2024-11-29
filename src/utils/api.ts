@@ -3,7 +3,7 @@ import axios from "axios";
 
 export interface Pokemon{
     name: string;
-    order: number;
+    id: number;
     sprites: {
         other: {
             'official-artwork': {
@@ -15,8 +15,8 @@ export interface Pokemon{
         slots: number;
         type: {
             name: string;
-        }
-    }
+        };
+    }[];
 }
 
 
