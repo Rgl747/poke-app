@@ -1,9 +1,11 @@
 import { MainStackScreenProps } from "../navigators/types";
 import { useEffect, useState } from "react";
 import { fetchData } from "../utils/api";
-import { AspectRatio, Image, Heading, Stack, HStack, Center, Text, Skeleton } from "native-base";
+import { AspectRatio, Image, Heading, Stack, HStack, Center, Text, Skeleton, Icon, Pressable, Toast } from "native-base";
 import { getTypeColor, formatNumber } from "../utils/Helper";
 import { removeEscapeCharacters } from "../utils/Helper"; 
+import AntDesign from '@expo/vector-icons/AntDesign';
+import axios from "axios";
 
 interface Pokemon {
     name: string;
@@ -41,26 +43,95 @@ export function Detail({ route }: MainStackScreenProps<"Detail">) {
     const { name } = route.params;
     const [pokemon, setPokemon] = useState<Pokemon | null>(null);
     const [species, setSpecies] = useState<Species | null>(null);
-    const [isSpeciesLoading, setIsSpeciesLoading] = useState(true); 
+    const [isSpeciesLoading, setIsSpeciesLoading] = useState(true);
+    const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {
-        const url = `https://pokeapi.co/api/v2/pokemon/${name}`;
-        
-        fetchData(url).then((data) => {
-            setPokemon(data);  
+        const fetchPokemonData = async () => {
+            try {
+                // Cargar los datos del Pokémon
+                const pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${name}`;
+                const data = await fetchData(pokemonUrl);
+                if (data) {
+                    setPokemon(data);
 
-            if (data?.species?.url) {
-                fetchData(data.species.url).then((speciesData) => {
-                    setSpecies(speciesData);  
-                    setIsSpeciesLoading(false); 
+                    if (data?.species?.url) {
+                        const speciesData = await fetchData(data.species.url);
+                        setSpecies(speciesData);
+                    }
+                    setIsSpeciesLoading(false);
+                }
+            } catch (error) {
+                console.error("Error fetching Pokemon data:", error);
+                Toast.show({
+                    description: "Failed to load Pokémon data. Please try again later.",
+                    placement: "top",
                 });
             }
-        });
-    }, [name]);  
+        };
 
-    if (!pokemon || isSpeciesLoading) return null;  
+        const checkFavoriteStatus = async () => {
+            // Verificar si el Pokémon ya está en los favoritos
+            if (!name) return;
+            const url = `http://192.168.1.67:8000/api/favorites/`; // URL para obtener los favoritos
+            try {
+                const response = await axios.get(url);
+                const favoritePokemons = response.data;
+                const isInFavorites = favoritePokemons.some((fav: { name: string }) => fav.name === name);
+                setIsFavorite(isInFavorites);
+            } catch (error) {
+                console.error("Error checking favorite status:", error);
+            }
+        };
 
-    
+        fetchPokemonData();
+        checkFavoriteStatus();  // Verificar si el Pokémon ya está en favoritos
+
+    }, [name]); // El useEffect se ejecuta cuando cambia el nombre del Pokémon
+
+    const toggleFavorite = async () => {
+        if (!pokemon) return; // Asegurarse de que el objeto pokemon existe
+
+        const url = "http://192.168.1.67:8000/api/favorites/create/";
+        const body = { name: pokemon.name };
+
+        try {
+            const response = await axios.post(url, body, {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (response.status === 200 || response.status === 201) {
+                setIsFavorite(true);
+                Toast.show({
+                    description: "Pokemon added to favorites!",
+                    placement: "top",
+                });
+            }
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                console.error("Error:", error.response.data);
+                Toast.show({
+                    description: "Failed to add to favorites.",
+                    placement: "top",
+                });
+            } else if (axios.isAxiosError(error) && error.request) {
+                console.error("Network error:", error.request);
+                Toast.show({
+                    description: "Connection error. Please try again.",
+                    placement: "top",
+                });
+            } else {
+                console.error("Unexpected error:", error);
+                Toast.show({
+                    description: "An unexpected error occurred.",
+                    placement: "top",
+                });
+            }
+        }
+    };
+
+    if (!pokemon || isSpeciesLoading) return <Skeleton.Text />; // Muestra el esqueleto mientras se carga
+
     const flavorText = removeEscapeCharacters(species?.flavor_text_entries?.[0]?.flavor_text || "No description available");
 
     return (
@@ -69,15 +140,27 @@ export function Detail({ route }: MainStackScreenProps<"Detail">) {
                 safeArea
                 backgroundColor={getTypeColor(pokemon.types[0].type.name) + '.400'}
             >
-                <AspectRatio ratio={1} width="80%">
+                <Pressable 
+                    onPress={toggleFavorite}
+                    position={"absolute"}
+                    top={10}
+                    right={5}
+                    zIndex={10}
+                >
+                    <Icon 
+                        as={<AntDesign name={isFavorite ? "star" : "staro"} />} 
+                        size={25} 
+                        color={isFavorite ? "yellow" : "white"} 
+                    />
+                </Pressable>
+
+                <AspectRatio ratio={1} width="80%">                    
                     <Image
-                        source={{
-                            uri: pokemon.sprites.other["official-artwork"].front_default,
-                        }}
+                        source={{ uri: pokemon.sprites.other["official-artwork"].front_default }}
                         alt="Pokemon Image"
                     />
                 </AspectRatio>
-                
+
                 <HStack
                     justifyContent={"space-between"}
                     width="100%"
@@ -116,20 +199,18 @@ export function Detail({ route }: MainStackScreenProps<"Detail">) {
                     ))}
                 </HStack>
                 
-                
                 <Center> 
                     {isSpeciesLoading ? (
-                        
                         <Skeleton.Text />
                     ) : (
                         <Stack>
                             <Heading marginTop={4}>Description</Heading>
-                                <Text 
+                            <Text 
                                 marginTop={2} 
                                 fontSize={'lg'} 
                                 color='black'>
-                                    {flavorText}
-                                </Text>
+                                {flavorText}
+                            </Text>
                         </Stack>
                     )}
                 </Center>
@@ -139,10 +220,10 @@ export function Detail({ route }: MainStackScreenProps<"Detail">) {
                         <Heading marginTop={2}>Abilities</Heading>
                         {pokemon.abilities.map((abilityObj, index) => (
                             <Text 
-                            key={index}
-                            fontSize='lg'
-                            color="black" 
-                            textTransform="capitalize">
+                                key={index}
+                                fontSize='lg'
+                                color="black" 
+                                textTransform="capitalize">
                                 - {abilityObj.ability.name}
                             </Text>
                         ))}

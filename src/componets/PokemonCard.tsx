@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchData } from "../utils/api";
 import { useNavigation } from "@react-navigation/native";
 import { MainStackScreenProps } from "../navigators/types";
-import { Box, Heading, Image, Text, HStack, Pressable, Center, AspectRatio, Skeleton } from "native-base";
+import { Box, Heading, Image, Text, HStack, Pressable, Center, AspectRatio } from "native-base";
 import { getTypeColor, formatNumber } from "../utils/Helper";
 
 interface PokemonCardProps {

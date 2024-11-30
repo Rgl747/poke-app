@@ -33,10 +33,7 @@ export function MainNavigator() {
                 headerTintColor: 'white',
             }}/>
 
-
-            
-            <Stack.Screen name='Favorite' component={Favorite}/>
-
+            <Stack.Screen name="Favorite" component={Favorite} />
 
             <Stack.Group screenOptions={{ presentation: 'modal'}}>
                 <Stack.Screen name='Search' component={Search}/>
