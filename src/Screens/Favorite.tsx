@@ -4,18 +4,17 @@ import { FlatList, Box, Text, Center, Heading, Spinner, VStack, Image } from "na
 interface FavoritePokemon {
     name: string;
     id: number;
-    sprite: string;
+    sprite: string;  // Asegúrate de que `sprite` esté presente en la interfaz
 }
 
 export function Favorite() {
     const [favorites, setFavorites] = useState<FavoritePokemon[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    
     useEffect(() => {
         const fetchFavorites = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:8000/api/favorites/");
+                const response = await fetch("http://192.168.1.67:8000/api/favorites/");
                 if (response.ok) {
                     const data = await response.json();
                     setFavorites(data);
@@ -44,7 +43,7 @@ export function Favorite() {
         <Center flex={1} bg="white" padding={4}>
             {favorites.length === 0 ? (
                 <Text fontSize="lg" color="gray.500">
-                    Favorite pokemon not added
+                    No se han agregado Pokémon favoritos
                 </Text>
             ) : (
                 <FlatList
@@ -76,7 +75,7 @@ export function Favorite() {
                                             overflow="hidden"
                                         >
                                             <Image
-                                                source={{ uri: item.sprite }}
+                                                source={{ uri: item.sprite }}  // Usando sprite
                                                 alt={item.name}
                                                 size="100px"
                                             />
