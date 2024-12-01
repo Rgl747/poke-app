@@ -90,34 +90,43 @@ export function Detail({ route }: MainStackScreenProps<"Detail">) {
     }, [name]); // El useEffect se ejecuta cuando cambia el nombre del Pokémon
 
     const toggleFavorite = async () => {
-        if (!pokemon) return; // Asegurarse de que el objeto pokemon existe
-
-        const url = "http://192.168.1.67:8000/api/favorites/create/";
-        const body = { name: pokemon.name };
-
+        if (!pokemon) return;
+    
+        const urlAdd = "http://192.168.1.67:8000/api/favorites/create/";
+        const urlRemove = `http://192.168.1.67:8000/api/favorites/delete/${pokemon.name}/`;
+    
         try {
-            const response = await axios.post(url, body, {
-                headers: { "Content-Type": "application/json" },
-            });
-
-            if (response.status === 200 || response.status === 201) {
-                setIsFavorite(true);
-                Toast.show({
-                    description: "Pokemon added to favorites!",
-                    placement: "top",
+            if (isFavorite) {
+                // Eliminar de favoritos
+                const response = await axios.delete(urlRemove);
+                if (response.status === 204) {
+                    setIsFavorite(false);
+                    Toast.show({
+                        description: "Pokemon removed from favorites!",
+                        placement: "top",
+                    });
+                }
+            } else {
+                // Agregar a favoritos
+                const body = { name: pokemon.name };
+                const response = await axios.post(urlAdd, body, {
+                    headers: { "Content-Type": "application/json" },
                 });
+                if (response.status === 200 || response.status === 201) {
+                    setIsFavorite(true);
+                    Toast.show({
+                        description: "Pokemon added to favorites!",
+                        placement: "top",
+                    });
+                }
             }
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                console.error("Error:", error.response.data);
+            if (axios.isAxiosError(error)) {
+                const errorMessage = error.response
+                    ? error.response.data
+                    : "Connection error. Please try again.";
                 Toast.show({
-                    description: "Failed to add to favorites.",
-                    placement: "top",
-                });
-            } else if (axios.isAxiosError(error) && error.request) {
-                console.error("Network error:", error.request);
-                Toast.show({
-                    description: "Connection error. Please try again.",
+                    description: errorMessage,
                     placement: "top",
                 });
             } else {

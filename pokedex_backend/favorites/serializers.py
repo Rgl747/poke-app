@@ -4,4 +4,4 @@ from .models import Favorite
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
-        fields = ['id', 'name', 'sprite']  # Agregar sprite aquí
+        fields = ['id', 'name']  

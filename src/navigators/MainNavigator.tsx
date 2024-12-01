@@ -5,7 +5,6 @@ import { Detail } from "../Screens/Detail";
 import { TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { MainStackParamList } from "./types";
-import { Favorite } from "../Screens/Favorite";
 
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
@@ -32,8 +31,6 @@ export function MainNavigator() {
                 headerTransparent: true,
                 headerTintColor: 'white',
             }}/>
-
-            <Stack.Screen name="Favorite" component={Favorite} />
 
             <Stack.Group screenOptions={{ presentation: 'modal'}}>
                 <Stack.Screen name='Search' component={Search}/>
