@@ -1,5 +1,4 @@
-
-# Pokédex App
+# Pokédex App - FrontEnd
 
 ## Descripción
 
